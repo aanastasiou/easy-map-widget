@@ -8,12 +8,15 @@
 
 (define easy-map-widget%
   (class* object% (view<%>)
-    (init-field @default-position @zoom-level @layers)
+    (init-field @default-position @zoom-level @layers @center-on-track @resize-to-fit-track)
     (super-new)
+    ; Due to the way observables get updated, layer-names preserves
+    ; a list of layer names that are already loaded to the map and it is
+    ; used when the time comes to remove them.
     (define layer-names '())
 
     (define/public (dependencies)
-      (list @default-position @zoom-level @layers))
+      (list @default-position @zoom-level @layers @center-on-track @resize-to-fit-track))
 
     (define/public (create parent)
       (let [(widget (new map-widget%
@@ -23,8 +26,7 @@
         (send widget zoom-level (obs-peek @zoom-level))
         (map (lambda (l) (send widget add-layer l)) (obs-peek @layers))
         (set! layer-names (map (lambda (l) (send l get-name)) (obs-peek @layers)))
-        (when (not (eq? (obs-peek @layers) '()))
-          (send widget resize-to-fit #f))
+        (send widget resize-to-fit (obs-peek @resize-to-fit-track))
         (send widget end-edit-sequence)
         widget))
 
@@ -36,8 +38,8 @@
         [@layers (map (lambda (l) (send v remove-layer l)) layer-names)
                  (map (lambda (l) (send v add-layer l)) val)
                  (map (lambda (l) (send l get-name)) val)
-                 (when (not (eq? val '()))
-                   (send v resize-to-fit #f))])
+                 (obs-set! @resize-to-fit-track #f)
+                 (obs-set! @center-on-track #f)
       (send v end-edit-sequence))
     
     (define/public (destroy v)
