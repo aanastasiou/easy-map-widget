@@ -31,20 +31,26 @@
       (let [(widget (new map-widget%
                          [parent parent]
                          [position (obs-peek @default-position)]))]
+        (define layers-value (obs-peek @layers))
+        (define center-on-layer-value (obs-peek @center-on-layer))
+        (define resize-to-fit-value (obs-peek @resize-to-fit-layer))
+        
         (send widget begin-edit-sequence)
         (send widget zoom-level (obs-peek @zoom-level))
         ; Add the layers to the map
-        (map (lambda (l) (send widget add-layer l)) (obs-peek @layers))
+        (map (lambda (l) (send widget add-layer l)) layers-value)
         ; Keep a list of the layer names
-        (set! layer-names (map (lambda (l) (send l get-name)) (obs-peek @layers)))
+        (set! layer-names (map (lambda (l) (send l get-name)) layers-value))
         ; Before deciding whether to set the layer related info, check if the specified
         ; layer names exist in the list of layer names
-        (when (not (is-in-list? layer-names (obs-peek @center-on-layer)))
-          (obs-set! @center-on-layer #f))
-        (send widget center-map (obs-peek @center-on-layer))
-        (when (not (is-in-list? layer-names (obs-peek @resize-to-fit-layer)))            
-            (obs-set! @resize-to-fit-layer #f))
-        (send widget resize-to-fit (obs-peek @resize-to-fit-layer))
+        (when (and (not (eq? center-on-layer-value '()))
+                   (or (is-in-list? layer-names center-on-layer-value)
+                       (eq? center-on-layer-value #f)))
+          (send widget center-map (obs-peek @center-on-layer)))
+        (when (and (not (eq? resize-to-fit-value '()))
+                   (or (is-in-list? layer-names resize-to-fit-value)
+                       (eq? resize-to-fit-value #f)))
+          (send widget resize-to-fit resize-to-fit-value))
         (send widget end-edit-sequence)
         widget))
 
@@ -55,11 +61,15 @@
         [@default-position (send v move-to val)]
         [@layers (map (lambda (l) (send v remove-layer l)) layer-names)
                  (map (lambda (l) (send v add-layer l)) val)
-                 (map (lambda (l) (send l get-name)) val)
-                 (obs-set! @resize-to-fit-layer #f)
-                 (obs-set! @center-on-layer #f)]
-        [@center-on-layer (send v center-map (obs-peek @center-on-layer))]
-        [@resize-to-fit-layer (send v resize-to-fit (obs-peek @resize-to-fit-layer))])
+                 (set! layer-names (map (lambda (l) (send l get-name)) val))]
+        [@center-on-layer (define col-value (obs-peek @center-on-layer))
+                          (when (or (is-in-list? layer-names col-value)
+                                    (eq? col-value #f))
+                            (send v center-map (obs-peek @center-on-layer)))]
+        [@resize-to-fit-layer (define rtfl-value (obs-peek @resize-to-fit-layer))
+                              (when (or (is-in-list? layer-names rtfl-value)
+                                        (eq? rtfl-value #f))
+                                (send v resize-to-fit rtfl-value))])
       (send v end-edit-sequence))
     
     (define/public (destroy v)
@@ -68,8 +78,8 @@
 (define (easy-map-widget (p (obs (vector 0.0 0.0)))
                          (z (obs 12))
                          (l (obs '()))
-                         (cl (obs #f))
-                         (rl (obs #f)))
+                         (cl (obs '()))
+                         (rl (obs '())))
   (new easy-map-widget% [@default-position p] [@zoom-level z] [@layers l] [@center-on-layer cl] [@resize-to-fit-layer rl]))
 
 

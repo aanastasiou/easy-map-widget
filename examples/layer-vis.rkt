@@ -23,19 +23,19 @@
 (define circle-point-layer-athens (points-layer 'AthensCircle points-athens))
 (define circle-point-layer-halkida (points-layer 'HalkidaCircle points-halkida))
 
-(define the-zoom (obs 12))
+(define the-zoom (obs 9))
 (define the-layers (obs (list circle-point-layer-athens
                               circle-point-layer-halkida)))
-(define col (obs 'AthensCircle))
-(define rtfl (obs #f))
+(define col (obs '()))
+(define rtfl (obs 'AthensCircle))
 
 (define the-map (easy-map-widget athens-pos the-zoom the-layers col rtfl))
+(obs-set! rtfl 'AthensCircle)
 
+;(obs-set! col 'HalkidaCircle)
 (render
  (window
   (vpanel
    the-map
    #:min-size '(600 400))
   #:title "Map"))
-
-
