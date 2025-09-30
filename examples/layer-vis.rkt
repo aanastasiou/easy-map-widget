@@ -11,17 +11,25 @@
                           (- cy (* r (sin (((2.0 . * . pi) . * . x) . / . N))))))))
 
 
-(define the-pos (obs (vector 37.984167 23.728056)))
-(define points (c (vector-ref (obs-peek the-pos) 0)
-                  (vector-ref (obs-peek the-pos) 1) 0.1 16))
-(define circle-point-layer (points-layer 'Circle points))
-(define circle-line-layer (line-layer 'Lines points))
+(define athens-pos (obs (vector 37.984167 23.728056)))
+(define halkida-pos (obs (vector 38.4625 23.595)))
+
+(define points-athens (c (vector-ref (obs-peek athens-pos) 0)
+                         (vector-ref (obs-peek athens-pos) 1) 0.1 16))
+
+(define points-halkida (c (vector-ref (obs-peek halkida-pos) 0)
+                          (vector-ref (obs-peek halkida-pos) 1) 0.1 16))
+
+(define circle-point-layer-athens (points-layer 'AthensCircle points-athens))
+(define circle-point-layer-halkida (points-layer 'HalkidaCircle points-halkida))
 
 (define the-zoom (obs 12))
-(define the-layers (obs (list circle-point-layer
-                              circle-line-layer)))
+(define the-layers (obs (list circle-point-layer-athens
+                              circle-point-layer-halkida)))
+(define col (obs 'AthensCircle))
+(define rtfl (obs #f))
 
-(define the-map (easy-map-widget the-pos the-zoom the-layers))
+(define the-map (easy-map-widget athens-pos the-zoom the-layers col rtfl))
 
 (render
  (window
