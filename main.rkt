@@ -41,16 +41,6 @@
         (map (lambda (l) (send widget add-layer l)) layers-value)
         ; Keep a list of the layer names
         (set! layer-names (map (lambda (l) (send l get-name)) layers-value))
-        ; Before deciding whether to set the layer related info, check if the specified
-        ; layer names exist in the list of layer names
-        (when (and (not (eq? center-on-layer-value '()))
-                   (or (is-in-list? layer-names center-on-layer-value)
-                       (eq? center-on-layer-value #f)))
-          (send widget center-map (obs-peek @center-on-layer)))
-        (when (and (not (eq? resize-to-fit-value '()))
-                   (or (is-in-list? layer-names resize-to-fit-value)
-                       (eq? resize-to-fit-value #f)))
-          (send widget resize-to-fit resize-to-fit-value))
         (send widget end-edit-sequence)
         widget))
 
@@ -75,12 +65,16 @@
     (define/public (destroy v)
       (void))))
 
-(define (easy-map-widget (p (obs (vector 0.0 0.0)))
-                         (z (obs 12))
-                         (l (obs '()))
-                         (cl (obs '()))
-                         (rl (obs '())))
-  (new easy-map-widget% [@default-position p] [@zoom-level z] [@layers l] [@center-on-layer cl] [@resize-to-fit-layer rl]))
+(define (easy-map-widget (@default-position (obs (vector 37.984167 23.728056)))
+                         (@zoom-level (obs 12))
+                         (@layers (obs '()))
+                         (@center-on-layer (obs #f))
+                         (@resize-to-fit-layer (obs #f)))
+  (new easy-map-widget% [@default-position @default-position]
+       [@zoom-level @zoom-level]
+       [@layers @layers]
+       [@center-on-layer @center-on-layer]
+       [@resize-to-fit-layer @resize-to-fit-layer]))
 
 
 ;(module+ test
