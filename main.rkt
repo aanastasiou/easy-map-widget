@@ -10,11 +10,7 @@
                                 [(exact-nonnegative-integer? (index-of lst itm)) #t]
                                 [else #f]))
 
-; NOTES: The map is initialised with layers
-;        If center-on-layer or resize-to-fit-layer exist in the layers, then they are set otherwise
-;        they are set to #f if they are not already on #f
-;        If either of those parameters is not #f then it is set
-;        There should be a difference between #f and '()
+  
 (define easy-map-widget%
   (class* object% (view<%>)
     (init-field @default-position @zoom-level @layers @center-on-layer @resize-to-fit-layer)
@@ -44,6 +40,14 @@
         (send widget end-edit-sequence)
         widget))
 
+    (define (center-resize-to-layer widget @value-obs operation)
+      (define centering-value (obs-peek @value-obs))
+      (when (or (is-in-list? layer-names centering-value)
+                (eq? centering-value #f))
+        (case operation
+          ['center (send widget center-map centering-value)]
+          ['resize (send widget resize-to-fit centering-value)])))
+
     (define/public (update v what val)
       (send v begin-edit-sequence)
       (case/dep what
@@ -52,14 +56,8 @@
         [@layers (map (lambda (l) (send v remove-layer l)) layer-names)
                  (map (lambda (l) (send v add-layer l)) val)
                  (set! layer-names (map (lambda (l) (send l get-name)) val))]
-        [@center-on-layer (define col-value (obs-peek @center-on-layer))
-                          (when (or (is-in-list? layer-names col-value)
-                                    (eq? col-value #f))
-                            (send v center-map (obs-peek @center-on-layer)))]
-        [@resize-to-fit-layer (define rtfl-value (obs-peek @resize-to-fit-layer))
-                              (when (or (is-in-list? layer-names rtfl-value)
-                                        (eq? rtfl-value #f))
-                                (send v resize-to-fit rtfl-value))])
+        [@center-on-layer (center-resize-to-layer v @center-on-layer 'center)]
+        [@resize-to-fit-layer (center-resize-to-layer v @resize-to-fit-layer 'resize)])
       (send v end-edit-sequence))
     
     (define/public (destroy v)

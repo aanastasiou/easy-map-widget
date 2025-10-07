@@ -13,7 +13,7 @@
                     (vector (+ cx (* r (cos (((2.0 . * . pi) . * . x) . / . N))))
                             (- cy (* r (sin (((2.0 . * . pi) . * . x) . / . N)))))))))
 
-; The centre geograhical position
+; The centre geographical position
 (define athens-pos (vector 37.984167 23.728056))
 
 ; A points layer associates a point marker with each geographical location
