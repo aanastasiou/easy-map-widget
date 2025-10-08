@@ -4,6 +4,7 @@
 
 (require racket/gui
          racket/gui/easy
+         racket/gui/easy/contract
          map-widget)
 
 (define (is-in-list? lst itm) (cond
@@ -28,8 +29,6 @@
                          [parent parent]
                          [position (obs-peek @default-position)]))]
         (define layers-value (obs-peek @layers))
-        (define center-on-layer-value (obs-peek @center-on-layer))
-        (define resize-to-fit-value (obs-peek @resize-to-fit-layer))
         
         (send widget begin-edit-sequence)
         (send widget zoom-level (obs-peek @zoom-level))
@@ -68,11 +67,16 @@
                          (@layers (obs '()))
                          (@center-on-layer (obs #f))
                          (@resize-to-fit-layer (obs #f)))
-  (new easy-map-widget% [@default-position @default-position]
+  
+  (new easy-map-widget%
+       [@default-position @default-position]
        [@zoom-level @zoom-level]
        [@layers @layers]
        [@center-on-layer @center-on-layer]
        [@resize-to-fit-layer @resize-to-fit-layer]))
+
+(define easy-map-widget-c (-> (obs/c (vectorof number?))
+                              (obs/c exact-nonnegative-integer?)))
 
 
 ;(module+ test
