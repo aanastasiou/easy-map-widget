@@ -14,5 +14,3 @@
    the-map
    #:min-size '(600 400))
   #:title "Map"))
-
-

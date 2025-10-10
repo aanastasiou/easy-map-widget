@@ -47,7 +47,7 @@
 ; Initialise the map
 (define the-zoom (obs 11))
 (define def-pos (obs c1))
-(define the-layers (obs (list f8-layer my-loc)))
+(define the-layers (obs (list f8-layer ufo-loc)))
 (define col (obs #f))
 (define rtfl (obs #f))
 
