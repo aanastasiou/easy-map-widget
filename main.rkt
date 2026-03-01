@@ -66,11 +66,7 @@
     (define/public (destroy v)
       (void))))
 
-;(define/contract easy-map-widget+c%
-;  (class/c [update (-> (is-a?/c easy-map-widget%) obs? any/c none/c)])
-;  easy-map-widget%)
-
-(define (easy-map-widget (@default-position (obs (vector 37.984167 23.728056)))
+(define (easy-map-widget (@default-position (obs (vector -31.9558 115.8597)))
                          (@zoom-level (obs 12))
                          (@layers (obs '()))
                          (@center-on-layer (obs #f))
