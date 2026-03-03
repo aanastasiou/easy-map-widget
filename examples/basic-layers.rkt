@@ -13,7 +13,7 @@
                     (vector (+ cx (* r (cos (((2.0 . * . pi) . * . x) . / . N))))
                             (- cy (* r (sin (((2.0 . * . pi) . * . x) . / . N)))))))))
 
-; The centre geographical position
+; The geographical position at the centre of this demo.
 (define athens-pos (vector 37.984167 23.728056))
 
 ; A points layer associates a point marker with each geographical location
@@ -40,6 +40,7 @@
                                                                 (lambda (x) athens-pos))
                                                     points-athens-3)))
 
+; The colour of labels that is used in the next layer.
 (define lbl-clr (make-object color% 32 255 32))
 
 ; A markers layer is used to add labels to specific points on a map.
@@ -51,26 +52,30 @@
 (define labels-layer (markers-layer 'AthensLayerDesc label-info))
 
 ; Initialise the map
-(define the-zoom (obs 11))
-(define def-pos (obs athens-pos))
-(define the-layers (obs (list circle-point-layer-athens
-                              circle-line-layer-athens
-                              circle-lines-layer-athens
-                              labels-layer)))
+(define the-default-zoom (obs 11))
+(define the-default-position (obs athens-pos))
+
+(define the-default-layers (obs (list circle-point-layer-athens
+                                      circle-line-layer-athens
+                                      circle-lines-layer-athens
+                                      labels-layer)))
+
+; Parameters that direct the map where to focus on and to what extent
 (define col (obs #f))
 (define rtfl (obs #f))
 
-(define the-map (easy-map-widget def-pos
-                                 the-zoom
-                                 the-layers
-                                 col
-                                 rtfl))
+; Initialisation of the map view
+(define a-map-view (easy-map-widget the-default-position
+                                    the-default-zoom
+                                    the-default-layers
+                                    col
+                                    rtfl))
 
 ; Create a modeless window
 (render
  (window
   (vpanel
-   the-map
+   a-map-view
    #:min-size '(600 400))
   #:title "Maps and symbols"))
 

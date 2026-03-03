@@ -65,11 +65,48 @@ easy-map-widget is a gui-easy wrapper for map-widget.
 
 @subsection{Depicting a location}
 
+The minimal example is of course to simply depict a location on the map.
+
+This is achieved in the following way:
+
 @codeblock[(dump-verbatim "typical-use.rkt")]
 
-@subsection{Visualising geographical features}
+This example creates a simple dialog with a map centered in the city of Athens.
+
+In fact, the definition of @racket[a-map-view] could have been even simpler,
+as:
+
+@codeblock{
+           (define a-map-view (easy-map-widget))
+}
+
+In this case, the map opens by default centered on the Australian city of Perth.
+
+Although depicting a static map can be useful, what is more useful is using
+a map-view to visualise geospatial data, such as points and boundaries.
+
+
+@subsection{Visualising geospatial data}
+
+@racket[map-widget] offers a number of different layers to visualise geospatial data
+through its layers classes.
+
+@racket[easy-map-widget] re-uses these layers and adds the ability to set and reset them
+on a given map through the use of observables.
+
+Almost all of these layers are demonstrated in the following example.
+The remaining layer (@racket[point-cloud]) is demonstrated separately.
 
 @codeblock[(dump-verbatim "basic-layers.rkt")]
+
+For more information about the layers please see the @racket[map-widget]
+documentation for @hyperlink["https://docs.racket-lang.org/map-widget/index.html#%28def._%28%28lib._map-widget%2Fmain..rkt%29._line-layer%29%29"]{line-layer},
+@hyperlink["https://docs.racket-lang.org/map-widget/index.html#%28def._%28%28lib._map-widget%2Fmain..rkt%29._lines-layer%29%29"]{lines-layer},
+@hyperlink["https://docs.racket-lang.org/map-widget/index.html#%28def._%28%28lib._map-widget%2Fmain..rkt%29._markers-layer%29%29"]{markers-layer},
+@hyperlink["https://docs.racket-lang.org/map-widget/index.html#%28def._%28%28lib._map-widget%2Fmain..rkt%29._points-layer%29%29"]{points-layer},
+
+
+
 
 @subsubsection{Visualising geographical distribution}
 
